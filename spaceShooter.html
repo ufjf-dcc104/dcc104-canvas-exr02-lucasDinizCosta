@@ -20,7 +20,7 @@
     var dt = anterior = 0;
     var player = new Spaceship();
     player.tiro = 0;
-    var sprites = [];
+    var tiros = [];
     var estado = 1;
 
     var melhorPontuacao = 0;
@@ -29,6 +29,18 @@
     var tempoInicioPartida = 5;   //Tempo até o objeto começar a cair
     var tempoGameOver = 5;
 
+    var inimigos = [];
+    for (var i = 0; i < 4; i++) {
+      var inimigo = new Spaceship();
+      inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
+      inimigo.y = -30;
+      inimigo.vy = 50;
+      //inimigo.rotacionar(ctx, 90);
+      inimigos.push(inimigo);
+    }
+    /*for (var i = 0; i < 10; i++) {
+      var inimigo =
+    }*/
     //Plataformas
     var chao = new Sprite();
     var plataforma = new Sprite();
@@ -108,17 +120,23 @@
           //chao.w = tela.width;
           //plataforma.x = posicaoRandPlataforma;
           //plataforma.colorBG = "blue";
+          /*for (var i = 0; i < 4; i++) {
+            var inimigo = new Spaceship();
+            inimigo.x = Math.floor(Math.random() * (tela.width - plataforma.w));
+            inimigo.y = -30;
+            inimigo.vy = 50;
+            inimigos.push(inimigo);
+          }*/
+          for (var i = 0; i < inimigos.length; i++) {
+            inimigos[i].mover(dt);
+          }
+          for (var i = 0; i < inimigos.length; i++) {
+            inimigos [i].desenharInimigo(ctx);
+          }
+          player.mover(dt);
           player.tiro = player.tiro - dt;
-          for (var i = 0; i < sprites.length; i++) {
-            //if(sprites[i].y >= 0){
-              sprites[i].mover(dt);
-              //player.tiro = player.tiro - dt;
-              //sprites[i].desenhar(ctx);
-            //}
-            //else{
-              //sprites.splice(i,1);
-            //}
-
+          for (var i = 0; i < tiros.length; i++) {
+              tiros[i].mover(dt);
           }
           /*if(tempoInicioPartida > 0){
             ctx.font = "30px Arial Black";
@@ -217,20 +235,21 @@
           player.desenhar(ctx);
           chao.desenhar(ctx);
           plataforma.desenhar(ctx);
-          energiaRectExt.desenhar(ctx);
-          energiaRectInt.desenhar(ctx);
+
           */
-          for (var i = 0; i < sprites.length; i++) {
-            if(sprites[i].y >= 0){
-              sprites[i].desenhar(ctx);
+          for (var i = 0; i < tiros.length; i++) {
+            if(tiros[i].y >= 0){
+              tiros[i].desenhar(ctx);
             }
-            else{
-              sprites.splice(i,1);
+            else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
+              tiros.splice(i,1);
             }
 
           }
-          player.mover(dt);
+
           player.desenhar(ctx);
+          energiaRectExt.desenhar(ctx);
+          energiaRectInt.desenhar(ctx);
 
           break;
         case 3:         //Main menu
@@ -310,7 +329,7 @@
                 //tiro.ang = pc.ang;
                 tiro.colorBG = 'red';
                 tiro.vy = -200;
-                sprites.push(tiro);
+                tiros.push(tiro);
                 player.tiro = 0.5;
               }
               break;

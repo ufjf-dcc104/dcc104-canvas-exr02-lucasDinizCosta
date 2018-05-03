@@ -29,6 +29,27 @@ Spaceship.prototype.desenhar = function (ctx) {
   ctx.closePath();
 }
 
+Spaceship.prototype.desenharInimigo = function (ctx) {
+  ctx.fillStyle = this.cor;
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(this.x, this.y);
+  ctx.lineTo(this.x + this.w/2, this.y + this.h);
+  ctx.lineTo(this.x + this.w, this.y);
+  ctx.lineTo(this.x, this.y);
+  ctx.fill();
+  ctx.stroke();
+  //ctx.rotate(Math.PI);
+
+  ctx.closePath();
+}
+
+Spaceship.prototype.rotacionar = function (ctx, graus){
+  ctx.rotate(graus*Math.PI/180);
+}
+
 Spaceship.prototype.mover = function (dt) {
 
     //this.vx = this.vx + (this.ax - this.vento)*dt;

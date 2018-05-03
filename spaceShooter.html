@@ -14,15 +14,18 @@
 
     var tela = document.getElementsByTagName("canvas")[0];
     var ctx = tela.getContext("2d");
-    var G = 200;
+    var G = 0;
+
 
     var dt = anterior = 0;
     var player = new Spaceship();
-    var estado = 3;
+    player.tiro = 0;
+    var sprites = [];
+    var estado = 1;
 
     var melhorPontuacao = 0;
     //var estadoJogada = false;     //Se perdeu ou não
-    var posicaoRandPlataforma = 0;
+
     var tempoInicioPartida = 5;   //Tempo até o objeto começar a cair
     var tempoGameOver = 5;
 
@@ -82,7 +85,8 @@
           break;
         case 1:
           player.x = tela.width/2 -15;
-          player.y = player.h;
+          player.y = tela.height - 15;
+          //console.log("FOI");
           tempoInicioPartida = 5;
           energiaRectInt.w = 100;
           player.energia = 100;
@@ -91,6 +95,7 @@
           break;
         case 2:
           limparTela();
+          //player.tiro = player.tiro - dt;
           ctx.font = "20px Arial Black";
           ctx.fillStyle = "white";
           ctx.textAlign = alignMainMenu;
@@ -98,12 +103,24 @@
           ctx.fillText("Pontos: ", tela.width - 105,50);
           ctx.fillText(player.pontos, tela.width - 30, 50);
           ctx.fillText("Vidas:  "+ player.vidas, tela.width - 70, 20);
-          chao.x = 0;
-          chao.y = tela.height - 15;
-          chao.w = tela.width;
-          plataforma.x = posicaoRandPlataforma;
-          plataforma.colorBG = "blue";
-          if(tempoInicioPartida > 0){
+          //chao.x = 0;
+          //chao.y = tela.height - 15;
+          //chao.w = tela.width;
+          //plataforma.x = posicaoRandPlataforma;
+          //plataforma.colorBG = "blue";
+          player.tiro = player.tiro - dt;
+          for (var i = 0; i < sprites.length; i++) {
+            //if(sprites[i].y >= 0){
+              sprites[i].mover(dt);
+              //player.tiro = player.tiro - dt;
+              //sprites[i].desenhar(ctx);
+            //}
+            //else{
+              //sprites.splice(i,1);
+            //}
+
+          }
+          /*if(tempoInicioPartida > 0){
             ctx.font = "30px Arial Black";
             ctx.fillText(Math.ceil(tempoInicioPartida), tela.width/2, tela.height/2);    //Arredonda pro maior inteiro
             tempoInicioPartida = tempoInicioPartida - 0.7*dt;
@@ -202,6 +219,18 @@
           plataforma.desenhar(ctx);
           energiaRectExt.desenhar(ctx);
           energiaRectInt.desenhar(ctx);
+          */
+          for (var i = 0; i < sprites.length; i++) {
+            if(sprites[i].y >= 0){
+              sprites[i].desenhar(ctx);
+            }
+            else{
+              sprites.splice(i,1);
+            }
+
+          }
+          player.mover(dt);
+          player.desenhar(ctx);
 
           break;
         case 3:         //Main menu
@@ -262,19 +291,34 @@
     addEventListener("keydown", function(e){
       console.log(e.keyCode);
       if (estado != 3) {
-        if(tempoInicioPartida <= 0){
+        //if(tempoInicioPartida <= 0){
           switch (e.keyCode) {
             case 37:
-              player.ax = -100;
+              player.vx = -150;
               break;
             case 39:
-              player.ax = +100;
+              player.vx = +150;
+              break;
+            case 32:
+              if(player.tiro<=0){
+                console.log(player.tiro);
+                var tiro = new Sprite();
+                tiro.x = player.x + player.w/2 -2;
+                tiro.y = player.y-player.h;
+                tiro.w = 5;
+                tiro.h = 5;
+                //tiro.ang = pc.ang;
+                tiro.colorBG = 'red';
+                tiro.vy = -200;
+                sprites.push(tiro);
+                player.tiro = 0.5;
+              }
               break;
             case 38:
-              player.ay = -400;
+              //player.ay = -400;
               break;
             case 40:
-              player.ay = +100;
+              //player.ay = +100;
               break;
             case 27:      //Pressionar o Esq
               stateMainMenu = 0;
@@ -282,14 +326,14 @@
               break;
             default:
           }
-        }
+        //}
       }
       else{
         switch (e.keyCode) {
           case 13:    //Enter
             if(stateMainMenu == 0){
               estado = 1;
-              posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
+              //posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
             }
             else{
               estado = 5;
@@ -298,7 +342,7 @@
           case 32:         //Space bar
             if(stateMainMenu == 0){
               estado = 1;
-              posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
+              //posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
             }
             else{
               estado = 5;
@@ -328,11 +372,11 @@
       switch (e.keyCode) {
         case 37:
         case 39:
-          player.ax = 0;
+          player.vx = 0;
           break;
         case 38:
         case 40:
-          player.ay = 0;
+          //player.ay = 0;
           break;
         default:
       }

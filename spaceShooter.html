@@ -74,8 +74,8 @@
 
     /**************************************************
       *           Estados:
-      * 0 - Venceu;         //Pousou no ponto certo e com energia e será iniciada uma nova fase
-      * 1 - Repara elementos;//Ajusta determinados elementos do jogo, como pontos e posições de elementos
+      * 0 - CriaPlayer;     //Estado responsável por criar um novo player apenas;
+      * 1 - ReparaElementos;//Ajusta determinados elementos do jogo, como pontos e posições de elementos e ajusta as vidas
       * 2 - Jogando;        //Durante a partida
       * 3 - Menu;           //Main menu tem duas opções: "new game" e "quit";
       * 4 - Game over;      //Exibe uma mensagem de game over na tela
@@ -89,21 +89,23 @@
 
       switch (estado) {
         case 0:
-          posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
-          player.pontos = player.pontos + 100 + Math.ceil(player.energia);
+          player = new Spaceship();
 
           estado = 1;
 
           break;
         case 1:
-          player.x = tela.width/2 -15;
-          player.y = tela.height - 15;
-          //console.log("FOI");
-          tempoInicioPartida = 5;
-          energiaRectInt.w = 100;
-          player.energia = 100;
+          if(player.vidas == 1){
+            estado = 4;
+          }
+          else{
+            if(player.energia == 0)
+              player.vidas--;
 
-          estado = 2;
+            player.energia = 100;
+            energiaRectInt.w = player.energia;
+            estado = 2;
+          }
           break;
         case 2:
           limparTela();
@@ -138,7 +140,7 @@
               inimigos[i].mover(dt);
           }
 
-          player.mover(dt);
+          player.moverPlayer(dt);
           player.tiro = player.tiro - dt;
           for (var i = 0; i < tiros.length; i++) {
               tiros[i].mover(dt);
@@ -164,6 +166,8 @@
               tiros.splice(i,1);
           }
 
+
+
           for (var i = 0; i < tiros.length; i++) {
             if(tiros[i].y>=0){
               tiros[i].desenhar(ctx);
@@ -177,11 +181,32 @@
             inimigos[i].desenharInimigo(ctx);
           }
 
+          for(var i = 0; i < inimigos.length; i++){
+            if(player.imunidade <= 0 && player.colidiuCom(inimigos[i])){
+              //pc.cor = "red";
+              /*pc.x = 0;
+              pc.y = 0;
+              pc.vx = 0;
+              pc.vy = 0;*/
+              player.imunidade = 3;
+              if(player.energia > 0)
+                player.energia = player.energia - 30;
+              if(player.energia < 0)
+                player.energia = 0;
+              energiaRectInt.w = player.energia;
+              break;
+            }
+            else{
+              player.cor = "grey";
+            }
+          }
 
           player.desenhar(ctx);
           energiaRectExt.desenhar(ctx);
           energiaRectInt.desenhar(ctx);
-
+          if(player.energia == 0){
+            estado = 1;
+          }
           break;
         case 3:         //Main menu
           limparTela();
@@ -216,6 +241,9 @@
               tempoGameOver = tempoGameOver - 0.7*dt;
           }
           else{
+              if(player.pontos > melhorPontuacao)
+                melhorPontuacao = player.pontos;
+              player.pontos = null;   //Limpa o objeto
               estado = 3;
           }
 

@@ -19,6 +19,8 @@
 
     var dt = anterior = 0;
     var player = new Spaceship();
+    var playerVel = 150;
+    var tiroVel = 300;
     player.tiro = 0;
     var tiros = [];
     var estado = 1;
@@ -30,14 +32,15 @@
     var tempoGameOver = 5;
 
     var inimigos = [];
-    for (var i = 0; i < 4; i++) {
+    var inimigosVel = 150;
+    /*for (var i = 0; i < 4; i++) {
       var inimigo = new Spaceship();
       inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
       inimigo.y = -30;
-      inimigo.vy = 150;
+      inimigo.vy = inimigosVel;
       //inimigo.rotacionar(ctx, 90);
       inimigos.push(inimigo);
-    }
+    }*/
     /*for (var i = 0; i < 10; i++) {
       var inimigo =
     }*/
@@ -61,9 +64,14 @@
     energiaRectInt.colorBG = "green";
     energiaRectInt.borderSize = 0;
 
-    posicaoRandPlataforma = Math.floor(Math.random() * (tela.width - plataforma.w));
+
+    //Estabelece ordem e tempo para os inimigos descerem
+    posicaoRandPlataforma = Math.floor(Math.random() * 3);
     plataforma.y = tela.height - 15;
     plataforma.w = 50;
+    var tempoEspera = 1;
+    var inimigosDescerem = 1;//Math.floor(Math.random() * 4);
+
 
 
     //Main Menu campos
@@ -130,11 +138,19 @@
             inimigos.push(inimigo);
           }*/
 
-          for (var i = 0; i < inimigos.length; i++) {
+          if(tempoEspera > 0){
+            tempoEspera = tempoEspera - 0.7*dt
+          }
+          else{
+            tempoEspera = 1;
+            inimigosDescerem = Math.floor(Math.random() * 3);
+            criarInimigos(inimigosDescerem);
+            moveInimigos(inimigosDescerem);
+          }
+
+          for (var i = 0; i < inimigos.length; i++) { //Move e coloca os inimigos na parte de cima da tela
             if(inimigos[i].y > tela.height){
               inimigos[i].y = -inimigos[i].h;
-              inimigos[i].mover(dt);
-              console.log("foi");
             }
             else
               inimigos[i].mover(dt);
@@ -146,9 +162,8 @@
               tiros[i].mover(dt);
           }
 
-          //Teste da colisão dos tiros com os asteroides
-          for(var i = 0; i < tiros.length; i++){
-            if(tiros[i].y>=0){
+          for(var i = 0; i < tiros.length; i++){  //Teste da colisão dos tiros com os asteroides
+            if(tiros[i].y >= 0){
               var atingiu = false;
               for(var j = 0; j < inimigos.length; j++){
                 if(tiros[i].colidiuCom(inimigos[j])){
@@ -166,7 +181,20 @@
               tiros.splice(i,1);
           }
 
-
+          for(var i = 0; i < inimigos.length; i++){
+            if(player.imunidade <= 0 && player.colidiuCom(inimigos[i])){
+              player.imunidade = 3;
+              if(player.energia > 0)
+                player.energia = player.energia - 30;
+              if(player.energia < 0)
+                player.energia = 0;
+              energiaRectInt.w = player.energia;
+              break;
+            }
+            else{
+              player.cor = "grey";
+            }
+          }
 
           for (var i = 0; i < tiros.length; i++) {
             if(tiros[i].y>=0){
@@ -179,26 +207,6 @@
 
           for (var i = 0; i < inimigos.length; i++) {
             inimigos[i].desenharInimigo(ctx);
-          }
-
-          for(var i = 0; i < inimigos.length; i++){
-            if(player.imunidade <= 0 && player.colidiuCom(inimigos[i])){
-              //pc.cor = "red";
-              /*pc.x = 0;
-              pc.y = 0;
-              pc.vx = 0;
-              pc.vy = 0;*/
-              player.imunidade = 3;
-              if(player.energia > 0)
-                player.energia = player.energia - 30;
-              if(player.energia < 0)
-                player.energia = 0;
-              energiaRectInt.w = player.energia;
-              break;
-            }
-            else{
-              player.cor = "grey";
-            }
           }
 
           player.desenhar(ctx);
@@ -259,6 +267,43 @@
       requestAnimationFrame(passo);
     }
 
+    function criarInimigos(numero){       //Cria os inimigos parados
+      for(var i = 0; i < numero; i++){
+        var inimigo = new Spaceship();
+        inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
+        inimigo.y = -30;
+        //inimigo.vy = 150;
+        //inimigo.rotacionar(ctx, 90);
+        inimigos.push(inimigo);
+      }
+    }
+
+    function moveInimigos(numero){
+      var contador = 0;
+      for(var i = 0; i < inimigos.length; i++){
+        if(inimigos[i].vy == 0 && contador < numero){
+          inimigos[i].vy = inimigosVel;
+          contador++;
+        }
+        if(contador == numero){
+          break;
+        }
+      }
+    }
+
+    function controlaVelocidadeInimigos(vel){
+      for(var i = 0; i < inimigos.length; i++){
+        if(inimigos[i].vy == inimigosVel)
+          inimigos[i].vy = vel;
+      }
+      inimigosVel = vel;
+    }
+
+
+    function controlaVelocidadePlayer(vel){
+      playerVel = vel;
+    }
+
     requestAnimationFrame(passo);
 
     function limparTela() {
@@ -272,14 +317,14 @@
         //if(tempoInicioPartida <= 0){
           switch (e.keyCode) {
             case 37:
-              player.vx = -150;
+              player.vx = -playerVel;
               break;
             case 39:
-              player.vx = +150;
+              player.vx = +playerVel;
               break;
             case 32:
-              if(player.tiro<=0){
-                console.log(player.tiro);
+              if(player.tiro <= 0){
+                //console.log(player.tiro);
                 var tiro = new Sprite();
                 tiro.x = player.x + player.w/2 -2;
                 tiro.y = player.y-player.h;
@@ -287,7 +332,7 @@
                 tiro.h = 5;
                 //tiro.ang = pc.ang;
                 tiro.colorBG = 'red';
-                tiro.vy = -300;
+                tiro.vy = -tiroVel;
                 tiros.push(tiro);
                 player.tiro = 0.5;
               }

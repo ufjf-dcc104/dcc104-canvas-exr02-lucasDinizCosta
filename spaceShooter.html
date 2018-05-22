@@ -34,7 +34,7 @@
       var inimigo = new Spaceship();
       inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
       inimigo.y = -30;
-      inimigo.vy = 50;
+      inimigo.vy = 150;
       //inimigo.rotacionar(ctx, 90);
       inimigos.push(inimigo);
     }
@@ -127,125 +127,56 @@
             inimigo.vy = 50;
             inimigos.push(inimigo);
           }*/
+
           for (var i = 0; i < inimigos.length; i++) {
-            inimigos[i].mover(dt);
+            if(inimigos[i].y > tela.height){
+              inimigos[i].y = -inimigos[i].h;
+              inimigos[i].mover(dt);
+              console.log("foi");
+            }
+            else
+              inimigos[i].mover(dt);
           }
-          for (var i = 0; i < inimigos.length; i++) {
-            inimigos [i].desenharInimigo(ctx);
-          }
+
           player.mover(dt);
           player.tiro = player.tiro - dt;
           for (var i = 0; i < tiros.length; i++) {
               tiros[i].mover(dt);
           }
-          /*if(tempoInicioPartida > 0){
-            ctx.font = "30px Arial Black";
-            ctx.fillText(Math.ceil(tempoInicioPartida), tela.width/2, tela.height/2);    //Arredonda pro maior inteiro
-            tempoInicioPartida = tempoInicioPartida - 0.7*dt;
 
-          }
-          else{
-            if(player.energia <= 0.1){    //Energia ruim
-              if(player.vidas == 0){
-                player.vidas = 3;
-                if(player.pontos > melhorPontuacao){
-                  melhorPontuacao = player.pontos;
+          //Teste da colisão dos tiros com os asteroides
+          for(var i = 0; i < tiros.length; i++){
+            if(tiros[i].y>=0){
+              var atingiu = false;
+              for(var j = 0; j < inimigos.length; j++){
+                if(tiros[i].colidiuCom(inimigos[j])){
+                  inimigos.splice(j,1);
+                  player.pontos += 50;
+                  atingiu = true;
                 }
-                player.pontos = 0;
-                estado = 4;
               }
-              else{
-                player.vidas = player.vidas - 1;
-                estado = 1;
+              if (atingiu) {
+                atingiu = null;
+                tiros.splice(i,1);
               }
             }
-            else{     //Com energia
-              if(player.colidiuCom(chao) && player.colidiuCom(plataforma)){
-                console.log("teste");
-                player.y = chao.y;
-                var velResultante = Math.pow(Math.pow(player.vx,2) + Math.pow(player.vy,2), 0.5);
-                player.vy = 0;
-                player.vx = 0;
-                if(velResultante>100){
-                  console.log("A sua nave explodiu!!!");
-                  if(player.vidas == 0){
-                    player.vidas = 3;
-                    if(player.pontos > melhorPontuacao){
-                      melhorPontuacao = player.pontos;
-                    }
-                    player.pontos = 0;
-                    estado = 4;
-                  }
-                  else{
-                    player.vidas = player.vidas - 1;
-                    estado = 1;
-                  }
-                }
-                else{
-                  if(player.x >= plataforma.x && player.x + player.w < plataforma.x + plataforma.w){
-                    estado = 0;
-                  }
-                  else{
-                    console.log("Pouso incorreto");
-                    if(player.vidas == 0){
-                      player.vidas = 3;
-                      if(player.pontos > melhorPontuacao){
-                        melhorPontuacao = player.pontos;
-                      }
-                      player.pontos = 0;
-                      estado = 4;
-                    }
-                    else{
-                      player.vidas = player.vidas - 1;
-                      estado = 1;
-                    }
-
-                  }
-                }
-              }
-              else{
-                if(player.colidiuCom(chao)){
-                  player.y = chao.y;
-                  player.vy = 0;
-                  player.vx = 0;
-                  if(player.vidas == 0){
-                    player.vidas = 3;
-                    if(player.pontos > melhorPontuacao){
-                      melhorPontuacao = player.pontos;
-                    }
-                    player.pontos = 0;
-                    estado = 4;
-                  }
-                  else{
-                    player.vidas = player.vidas - 1;
-                    estado = 1;
-                  }
-                }
-              }
-              player.mover(dt);
-              player.impoeLimites(0,0, tela.width, tela.height);
-            }
+            else
+              tiros.splice(i,1);
           }
 
-          if(energiaRectInt.w >= 0){
-            energiaRectInt.w = energiaRectInt.w - 5/100 * (Math.abs(player.ay) + Math.abs(player.ax)) * dt;       ///Associa a mudança de energia as acelerações e oscilações em função do fps
-            player.energia = player.energia - 5/100 * (Math.abs(player.ay) + Math.abs(player.ax)) * dt;
-          }
-
-          player.desenhar(ctx);
-          chao.desenhar(ctx);
-          plataforma.desenhar(ctx);
-
-          */
           for (var i = 0; i < tiros.length; i++) {
-            if(tiros[i].y >= 0){
+            if(tiros[i].y>=0){
               tiros[i].desenhar(ctx);
             }
             else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
               tiros.splice(i,1);
             }
-
           }
+
+          for (var i = 0; i < inimigos.length; i++) {
+            inimigos[i].desenharInimigo(ctx);
+          }
+
 
           player.desenhar(ctx);
           energiaRectExt.desenhar(ctx);
@@ -328,7 +259,7 @@
                 tiro.h = 5;
                 //tiro.ang = pc.ang;
                 tiro.colorBG = 'red';
-                tiro.vy = -200;
+                tiro.vy = -300;
                 tiros.push(tiro);
                 player.tiro = 0.5;
               }

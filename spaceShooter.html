@@ -20,6 +20,8 @@
     var imageLibrary = new ImageLibrary();
     imageLibrary.load("menu", "menu.jpg");
     imageLibrary.load("fundo-fase", "fundo-fase.jpg");
+    imageLibrary.load("player-ship", "player_ship.png");
+    imageLibrary.load("asteroides","Asteroides.png");
 
 
     var dt = anterior = 0;
@@ -205,7 +207,8 @@
             for (var i = 0; i < inimigos.length; i++) {
               inimigos[i].desenharInimigo(ctx);
             }
-            player.desenhar(ctx);
+            //player.desenhar(ctx);
+            player.desenharImagem(ctx);
             energiaRectExt.desenhar(ctx);
             energiaRectInt.desenhar(ctx);
             tempoAumentarVelocidade = tempoAumentarVelocidade - 0.7*dt;

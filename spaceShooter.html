@@ -19,11 +19,11 @@
 
     var dt = anterior = 0;
     var player = new Spaceship();
-    var playerVel = 150;
-    var tiroVel = 300;
+    var playerVel = 175;
+    var tiroVel = 400;
     player.tiro = 0;
     var tiros = [];
-    var estado = 1;
+    var estado = 3;
 
     var melhorPontuacao = 0;
     //var estadoJogada = false;     //Se perdeu ou não
@@ -33,20 +33,6 @@
 
     var inimigos = [];
     var inimigosVel = 150;
-    /*for (var i = 0; i < 4; i++) {
-      var inimigo = new Spaceship();
-      inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
-      inimigo.y = -30;
-      inimigo.vy = inimigosVel;
-      //inimigo.rotacionar(ctx, 90);
-      inimigos.push(inimigo);
-    }*/
-    /*for (var i = 0; i < 10; i++) {
-      var inimigo =
-    }*/
-    //Plataformas
-    var chao = new Sprite();
-    var plataforma = new Sprite();
 
     //Energia
     var energiaRectExt = new Sprite();
@@ -66,13 +52,9 @@
 
 
     //Estabelece ordem e tempo para os inimigos descerem
-    posicaoRandPlataforma = Math.floor(Math.random() * 3);
-    plataforma.y = tela.height - 15;
-    plataforma.w = 50;
+    var tempoAumentarVelocidade = 15;
     var tempoEspera = 1;
-    var inimigosDescerem = 1;//Math.floor(Math.random() * 4);
-
-
+    var inimigosDescerem = 1;
 
     //Main Menu campos
     var fontMainMenu = "30px Arial Black";
@@ -98,20 +80,29 @@
       switch (estado) {
         case 0:
           player = new Spaceship();
-
+          player.tiro = 0;
+          player.x = tela.width/2 - 15;
+          player.y = tela.height-30;
+          tiros.splice(0,tiros.length);
           estado = 1;
 
           break;
         case 1:
+          tiros.splice(0,tiros.length);
           if(player.vidas == 1){
             estado = 4;
           }
           else{
             if(player.energia == 0)
               player.vidas--;
-
+            tempoAumentarVelocidade = 15;
+            inimigosVel = 150;
+            controlaVelocidadeInimigos(inimigosVel);
+            player.x = tela.width/2 - 15;
+            player.y = tela.height-30;
             player.energia = 100;
             energiaRectInt.w = player.energia;
+            inimigos.splice(0,inimigos.length);
             estado = 2;
           }
           break;
@@ -143,7 +134,7 @@
           }
           else{
             tempoEspera = 1;
-            inimigosDescerem = Math.floor(Math.random() * 3);
+            inimigosDescerem = Math.floor(Math.random() * 4);
             criarInimigos(inimigosDescerem);
             moveInimigos(inimigosDescerem);
           }
@@ -155,7 +146,7 @@
             else
               inimigos[i].mover(dt);
           }
-
+          player.impoeLimites(0, 0, tela.width, tela.height);
           player.moverPlayer(dt);
           player.tiro = player.tiro - dt;
           for (var i = 0; i < tiros.length; i++) {
@@ -208,10 +199,15 @@
           for (var i = 0; i < inimigos.length; i++) {
             inimigos[i].desenharInimigo(ctx);
           }
-
           player.desenhar(ctx);
           energiaRectExt.desenhar(ctx);
           energiaRectInt.desenhar(ctx);
+          tempoAumentarVelocidade = tempoAumentarVelocidade - 0.7*dt;
+          if(tempoAumentarVelocidade <= 0){
+            inimigosVel += 20;
+            controlaVelocidadeInimigos(inimigosVel);
+            tempoAumentarVelocidade = 15;
+          }
           if(player.energia == 0){
             estado = 1;
           }
@@ -251,6 +247,7 @@
           else{
               if(player.pontos > melhorPontuacao)
                 melhorPontuacao = player.pontos;
+              inimigos.splice(0,inimigos.length);
               player.pontos = null;   //Limpa o objeto
               estado = 3;
           }

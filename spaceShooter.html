@@ -124,22 +124,16 @@
             ctx.font = "20px Arial Black";
             ctx.fillStyle = "white";
             ctx.textAlign = alignMainMenu;
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "black";
+            ctx.strokeText("Energia: ", 55,20);
             ctx.fillText("Energia: ", 55,20);
+            ctx.strokeText("Pontos: ", tela.width - 105,50);
             ctx.fillText("Pontos: ", tela.width - 105,50);
+            ctx.strokeText(player.pontos, tela.width - 30, 50);
             ctx.fillText(player.pontos, tela.width - 30, 50);
+            ctx.strokeText("Vidas:  "+ player.vidas, tela.width - 70, 20);
             ctx.fillText("Vidas:  "+ player.vidas, tela.width - 70, 20);
-            //chao.x = 0;
-            //chao.y = tela.height - 15;
-            //chao.w = tela.width;
-            //plataforma.x = posicaoRandPlataforma;
-            //plataforma.colorBG = "blue";
-            /*for (var i = 0; i < 4; i++) {
-              var inimigo = new Spaceship();
-              inimigo.x = Math.floor(Math.random() * (tela.width - plataforma.w));
-              inimigo.y = -30;
-              inimigo.vy = 50;
-              inimigos.push(inimigo);
-            }*/
 
             if(tempoEspera > 0){
               tempoEspera = tempoEspera - 0.7*dt
@@ -224,6 +218,7 @@
               estado = 1;
             }
             break;
+
           case 3:         //Main menu
             limparTela();
             imageLibrary.drawSize(ctx, "menu", 0, 0, tela.width,tela.height);

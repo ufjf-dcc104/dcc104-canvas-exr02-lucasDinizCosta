@@ -39,25 +39,15 @@ Spaceship.prototype.desenhar = function (ctx) {
 Spaceship.prototype.desenharImagem = function (ctx) {
   this.w = 32;
   this.h = 32;
-  imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
-  /*if(this.imunidade > 0){
-    ctx.fillStyle = 'rgba(255, 255, 0, '+Math.cos(20*Math.PI*this.imunidade)+')';   ///Cores rgb, hsl, #hexadecimal
-    ctx.strokeStyle = 'hsla(150, 50%, 100%, 0.3)';
+  if(this.imunidade > 0){
+    ctx.save();
+    ctx.globalAlpha = 0.5;            //Muda a transparência da imagem, mostrando que o personagem está imune temporareamente
+    imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
+    ctx.restore();
   }
   else{
-    ctx.fillStyle = this.cor;
-    ctx.strokeStyle = "white";
-  }*/
-
-  /*ctx.lineWidth = "2";
-  ctx.beginPath();
-  ctx.moveTo(this.x, this.y);
-  ctx.lineTo(this.x + this.w/2, this.y - this.h);
-  ctx.lineTo(this.x + this.w, this.y);
-  ctx.lineTo(this.x, this.y);
-  ctx.fill();
-  ctx.stroke();
-  ctx.closePath();*/
+    imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
+  }
 }
 
 Spaceship.prototype.desenharInimigo = function (ctx) {
@@ -72,9 +62,6 @@ Spaceship.prototype.desenharInimigo = function (ctx) {
   ctx.lineTo(this.x, this.y);
   ctx.fill();
   ctx.stroke();
-  //ctx.rotate(Math.PI);
-  //console.log("TESTE2");
-
   ctx.closePath();
 }
 

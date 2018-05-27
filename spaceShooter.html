@@ -23,6 +23,9 @@
     imageLibrary.load("player-ship", "player_ship.png");
     imageLibrary.load("asteroides","Asteroides.png");
 
+    var audioLibrary = new AudioLibrary();
+    audioLibrary.load("photon-Gunshot","Photon_Gunshot.mp3");
+
 
     var dt = anterior = 0;
     var player = new Spaceship();
@@ -82,10 +85,10 @@
 
     function passo(t) {
       dt = (t - anterior)/1000;
-      if(imageLibrary.loaded<imageLibrary.size) {//if(il.loaded+al.loaded<il.size+al.size) {
+      if(imageLibrary.loaded+audioLibrary.loaded<imageLibrary.size+audioLibrary.size) {//if(il.loaded+al.loaded<il.size+al.size) {
         //ctx.fillStyle = "white";
         //ctx.fillText("Carregando imagens e audio... "+(100*(il.loaded+al.loaded)/(il.size+al.loaded)).toFixed(2)+"%", 20, 100);
-        console.log("Carregando imagens e audio... "+(100*(imageLibrary.loaded)/(imageLibrary.size)).toFixed(2)+"%", 20, 100);
+        console.log("Carregando imagens e audio... "+(100*(imageLibrary.loaded+audioLibrary.loaded)/(imageLibrary.size+audioLibrary.size)).toFixed(2)+"%", 20, 100);
         console.log("Não terminou de carregar...");
         //return;
       }
@@ -348,6 +351,7 @@
                 tiro.w = 5;
                 tiro.h = 5;
                 //tiro.ang = pc.ang;
+                audioLibrary.play("photon-Gunshot");
                 tiro.colorBG = 'red';
                 tiro.vy = -tiroVel;
                 tiros.push(tiro);

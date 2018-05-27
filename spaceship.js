@@ -37,17 +37,18 @@ Spaceship.prototype.desenhar = function (ctx) {
 }
 
 Spaceship.prototype.desenharImagem = function (ctx) {
-  if(this.imunidade > 0){
+  this.w = 32;
+  this.h = 32;
+  imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
+  /*if(this.imunidade > 0){
     ctx.fillStyle = 'rgba(255, 255, 0, '+Math.cos(20*Math.PI*this.imunidade)+')';   ///Cores rgb, hsl, #hexadecimal
     ctx.strokeStyle = 'hsla(150, 50%, 100%, 0.3)';
   }
   else{
     ctx.fillStyle = this.cor;
     ctx.strokeStyle = "white";
-  }
-  this.w = 32;
-  this.h = 32;
-  imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
+  }*/
+
   /*ctx.lineWidth = "2";
   ctx.beginPath();
   ctx.moveTo(this.x, this.y);
@@ -72,6 +73,7 @@ Spaceship.prototype.desenharInimigo = function (ctx) {
   ctx.fill();
   ctx.stroke();
   //ctx.rotate(Math.PI);
+  //console.log("TESTE2");
 
   ctx.closePath();
 }

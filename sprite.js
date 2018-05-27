@@ -8,6 +8,14 @@ function Sprite() {
   this.colorBG = "grey";
   this.colorBorder = "yellow";
   this.borderSize = 1;
+
+  //imagem status
+  //console.log("TESTE");
+  this.wImagem = 864;
+  this.hImagem = 242;
+  this.sx = 56;
+  this.sy = 28;
+  this.ang = 180;
 }
 
 Sprite.prototype.desenhar = function (ctx) {
@@ -18,14 +26,37 @@ Sprite.prototype.desenhar = function (ctx) {
   ctx.strokeRect(this.x, this.y, this.w, this.h);
 }
 
+Sprite.prototype.desenharInimigo = function (ctx) {
+  this.w = 30;
+  this.h = 30;
+  //imageLibrary.drawSize(ctx, "asteroides", this.x, this.y, this.w, this.h);
+  //imageLibrary.drawClipAngle(ctx, "asteroides", this.sx, this.sy, this.w, this.h, this.x, this.y, this.ang);
+  imageLibrary.drawClip(ctx, "asteroides", this.sx, this.sy, this.w, this.h, this.x, this.y);
+
+  //console.log("TESTE");
+  /*ctx.fillStyle = this.cor;
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(this.x, this.y);
+  ctx.lineTo(this.x + this.w/2, this.y + this.h);
+  ctx.lineTo(this.x + this.w, this.y);
+  ctx.lineTo(this.x, this.y);
+  ctx.fill();
+  ctx.stroke();
+  //ctx.rotate(Math.PI);
+
+  ctx.closePath();*/
+}
+
+Sprite.prototype.rotacionar = function (ctx, graus){
+  ctx.rotate(graus*Math.PI/180);
+}
+
 Sprite.prototype.mover = function (dt) {
-
-    //this.vx = this.vx + (this.ax - this.vento)*dt;
-    //this.vy = this.vy + (G+this.ay)*dt;
-
     this.x = this.x + this.vx*dt;
     this.y = this.y + this.vy*dt;
-
 }
 
 Sprite.prototype.colidiuCom = function (alvo) {

@@ -286,7 +286,7 @@
 
     function criarInimigos(numero){       //Cria os inimigos parados
       for(var i = 0; i < numero; i++){
-        var inimigo = new Spaceship();
+        var inimigo = new Sprite();
         inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
         inimigo.y = -30;
         //inimigo.vy = 150;
